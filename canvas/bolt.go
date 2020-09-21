@@ -2,7 +2,6 @@ package canvas
 
 import (
 	"encoding/json"
-	"log"
 	"time"
 
 	"github.com/boltdb/bolt"
@@ -20,14 +19,14 @@ const ImageCacheBucket = "image-cache"
 // BoltDB var
 var BoltDB *bolt.DB
 
-func init() {
-	db, err := bolt.Open("./bolt.db", 0600, nil)
+// Init 初始化 Bolt
+func Init(filePath string) error {
+	db, err := bolt.Open(filePath, 0600, nil)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	BoltDB = db
-
 	err = BoltDB.Update(func(tx *bolt.Tx) error {
 		_, err := tx.CreateBucketIfNotExists([]byte(ImageCacheBucket))
 		if err != nil {
@@ -37,9 +36,7 @@ func init() {
 		return nil
 	})
 
-	if err != nil {
-		log.Fatal(err)
-	}
+	return err
 }
 
 // SaveCache 保存图片缓存

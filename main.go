@@ -13,6 +13,11 @@ import (
 )
 
 func main() {
+	if err := canvas.Init("./bolt.db"); err != nil {
+		log.Fatal(err)
+		return
+	}
+
 	image, err := testImage()
 	if err != nil {
 		log.Fatal(err)
