@@ -34,7 +34,7 @@ func testImage() ([]byte, error) {
 	}
 
 	// 画布初始化
-	paint, err := canvas.NewCanvas("assets/background.png")
+	paint, err := canvas.NewCanvasWithLocal("assets/background.png")
 	if err != nil {
 		return nil, err
 	}

@@ -5,6 +5,7 @@ import (
 	"image"
 	"image/color"
 	"image/png"
+	"time"
 
 	"github.com/fogleman/gg"
 )
@@ -29,21 +30,36 @@ type TextConfig struct {
 	MaxWidth float64
 }
 
-// NewCanvas 返回新的画布
-func NewCanvas(background string) (*Canvas, error) {
+// NewCanvasWithLocal 从本地图片创建新的画布
+func NewCanvasWithLocal(background string) (*Canvas, error) {
 	img, err := LoadLocalImage(background)
 	if err != nil {
 		return nil, err
 	}
 
-	ins := &Canvas{
-		context: gg.NewContext(img.Bounds().Dx(), img.Bounds().Dy()),
-		Width:   uint(img.Bounds().Dx()),
-		Height:  uint(img.Bounds().Dy()),
+	return NewCanvas(img), nil
+}
+
+// NewCanvasWithRemote 从远程图片创建新的画布
+func NewCanvasWithRemote(source string, width uint, height uint, expired time.Duration) (*Canvas, error) {
+	img, err := FetchRemoteImage(source, width, height, expired)
+	if err != nil {
+		return nil, err
 	}
 
-	ins.context.DrawImage(img, 0, 0)
-	return ins, nil
+	return NewCanvas(img), nil
+}
+
+// NewCanvas 创建新的画布
+func NewCanvas(background image.Image) *Canvas {
+	ins := &Canvas{
+		context: gg.NewContext(background.Bounds().Dx(), background.Bounds().Dy()),
+		Width:   uint(background.Bounds().Dx()),
+		Height:  uint(background.Bounds().Dy()),
+	}
+
+	ins.context.DrawImage(background, 0, 0)
+	return ins
 }
 
 // DrawImage 绘制图片
